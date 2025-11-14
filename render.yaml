@@ -1,0 +1,22 @@
+# Render.com Deployment Configuration
+# Dokumentation: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: pdf-service
+    env: node
+    region: frankfurt # oder oregon
+    plan: starter # free, starter, standard, pro
+    buildCommand: npm install && npx playwright install chromium
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: API_KEY
+        generateValue: true # Render generiert automatisch einen sicheren Key
+      - key: ALLOWED_ORIGINS
+        value: "*" # Anpassen an deine Domains
+      - key: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD
+        value: "0"
+    autoDeploy: true
