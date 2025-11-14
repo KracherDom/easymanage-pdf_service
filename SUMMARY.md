@@ -274,14 +274,14 @@ Ersetze `$fetch('/api/generate-pdf')` mit `generatePdfViaService()`
 - ✅ API-Key-Auth
 - ✅ CORS-Support
 - ✅ Docker-ready
-- ✅ Northflank/Render.com-ready
+- ✅ Render.com-ready
 - ✅ Vollständige Dokumentation
 - ✅ Test-Suite
 - ✅ Lokal getestet und funktionsfähig
 
 ### Was noch zu tun ist:
 - ⏳ Git-Repo erstellen und pushen
-- ⏳ Northflank/Render.com Deployment
+- ⏳ Render.com Deployment
 - ⏳ Production-Tests
 - ⏳ Integration in EasyManage
 

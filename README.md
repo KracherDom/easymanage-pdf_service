@@ -11,7 +11,7 @@ Ein eigenständiger, deploy-barer Microservice für PDF-Generierung, extrahiert 
 - ✅ **CORS-Support**: Konfigurierbare Cross-Origin-Requests
 - ✅ **Health-Check**: `/health` Endpoint für Monitoring
 - ✅ **Docker-ready**: Containerisierung für einfaches Deployment
-- ✅ **Northflank/Render.com-ready**: Direkt deploy-bar auf Kubernetes
+- ✅ **Render.com-optimiert**: Direkt deploy-bar
 
 ## 🚀 Quick Start
 
@@ -194,26 +194,7 @@ async function generatePdf() {
 generatePdf()
 ```
 
-## 🌐 Deployment (Northflank empfohlen)
-
-### Deployment-Optionen
-
-#### Option 1: Northflank (empfohlen ⭐)
-- Kubernetes-basiert
-- EU-Datacenter (DSGVO-konform)
-- Kein Cold Start
-- Bessere Performance
-- **Siehe: [NORTHFLANK_DEPLOYMENT.md](NORTHFLANK_DEPLOYMENT.md)**
-
-#### Option 2: Render.com (Alternative)
-- Einfacher Setup
-- US-Datacenter
-- Free Tier verfügbar
-- **Siehe unten für Anleitung**
-
----
-
-## 🚀 Deployment auf Render.com (Alternative)
+## 🌐 Deployment auf Render.com
 
 ### Schritt 1: Repository vorbereiten
 
