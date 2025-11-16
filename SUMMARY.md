@@ -6,7 +6,7 @@ Die komplette PDF-Generierungslogik aus deinem EasyManage Nuxt-Projekt wurde ext
 
 ---
 
-## 📦 Erstellte Dateien
+## 🌐 Railway.com Deployment
 
 ### Core-Dateien
 - ✅ **src/server.js** - Express-Server mit API-Endpoints, API-Key-Auth, CORS
@@ -16,15 +16,16 @@ Die komplette PDF-Generierungslogik aus deinem EasyManage Nuxt-Projekt wurde ext
 ### Konfiguration
 - ✅ **.env** - Lokale Environment Variables
 - ✅ **.env.example** - Template für Production
-- ✅ **Dockerfile** - Docker-Container für Deployment
-- ✅ **render.yaml** - Render.com Blueprint für One-Click-Deploy
+- ✅ **Dockerfile** - Docker-Container für Railway.com Deployment
+- ✅ **railway.json** - Railway.com Konfiguration (optional)
 - ✅ **.gitignore** - Git Ignore Rules
 - ✅ **.dockerignore** - Docker Build Optimierung
 
 ### Dokumentation
 - ✅ **README.md** - Vollständige API-Doku, Deployment, Beispiele (10+ Seiten)
 - ✅ **QUICKSTART.md** - Schnelleinstieg in 5 Minuten
-- ✅ **DEPLOYMENT.md** - Deployment auf Render.com
+- ✅ **DEPLOYMENT.md** - Deployment auf Railway.com
+- ✅ **RAILWAY_DEPLOYMENT.md** - Ausführliche Railway.com-Anleitung
 - ✅ **INTEGRATION.md** - Integration in EasyManage Nuxt-Projekt
 - ✅ **test-service.js** - Automatisierte Test-Suite (6 Tests)
 

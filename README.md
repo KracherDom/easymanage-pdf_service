@@ -11,7 +11,7 @@ Ein eigenständiger, deploy-barer Microservice für PDF-Generierung, extrahiert 
 - ✅ **CORS-Support**: Konfigurierbare Cross-Origin-Requests
 - ✅ **Health-Check**: `/health` Endpoint für Monitoring
 - ✅ **Docker-ready**: Containerisierung für einfaches Deployment
-- ✅ **Render.com-optimiert**: Direkt deploy-bar
+- ✅ **Railway.com-optimiert**: Direkt deploy-bar auf moderner Cloud-Plattform
 
 ## 🚀 Quick Start
 
@@ -194,7 +194,18 @@ async function generatePdf() {
 generatePdf()
 ```
 
-## 🌐 Deployment auf Render.com
+## 🌐 Deployment auf Railway.com
+
+### Warum Railway.com?
+
+**Vorteile:**
+- ✅ **Einfachstes Setup**: GitHub-Integration mit Auto-Deploy
+- ✅ **Keine Konfiguration nötig**: Erkennt Dockerfile automatisch
+- ✅ **$5 Startguthaben**: Kostenlos zum Testen
+- ✅ **Moderne Infrastruktur**: Schnelles Deployment (~2-3 Minuten)
+- ✅ **Flexible Regions**: US + EU verfügbar
+- ✅ **Kein Cold Start**: Service bleibt warm (Hobby Plan)
+- ✅ **Integriertes Monitoring**: Metriken, Logs, Alerts
 
 ### Schritt 1: Repository vorbereiten
 

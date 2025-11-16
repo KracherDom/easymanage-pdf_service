@@ -24,9 +24,9 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
-// Body parser
-app.use(express.json({ limit: '10mb' }))
-app.use(express.urlencoded({ extended: true, limit: '10mb' }))
+// Body parser - reduced limit for memory efficiency
+app.use(express.json({ limit: '5mb' }))
+app.use(express.urlencoded({ extended: true, limit: '5mb' }))
 
 // API Key middleware
 function verifyApiKey(req, res, next) {
@@ -195,32 +195,52 @@ app.use((err, req, res, next) => {
 })
 
 // Start server
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
 ║   📄 PDF Generation Microservice                         ║
 ║                                                           ║
-║   Status: Running                                         ║
+║   Status: Running (Memory-optimized mode)                ║
 ║   Port: ${PORT}                                           ║
 ║   Environment: ${process.env.NODE_ENV || 'development'}  ║
 ║   API Key: ${API_KEY === 'development-key-change-in-production' ? '⚠️  Using development key' : '✅ Configured'}
+║   Max Memory: 512MB (Node.js heap limit)                 ║
+║   GC: Exposed (automatic cleanup enabled)                ║
 ║                                                           ║
 ║   Endpoints:                                              ║
 ║   - GET  /health   (Health check)                        ║
 ║   - POST /generate (PDF generation - requires API key)   ║
 ║                                                           ║
+║   Resource Optimizations:                                ║
+║   ✅ Browser instance pooling (5min idle timeout)        ║
+║   ✅ Aggressive Chromium flags (minimal memory)          ║
+║   ✅ Automatic garbage collection                        ║
+║   ✅ Reduced payload limits (5MB max)                    ║
+║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
   `)
 })
 
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('SIGTERM received, shutting down gracefully...')
-  process.exit(0)
+// Graceful shutdown with browser cleanup
+process.on('SIGTERM', async () => {
+  console.log('\n⚠️  SIGTERM signal received: closing HTTP server')
+  server.close(async () => {
+    console.log('🛑 HTTP server closed')
+    const { closeBrowser } = await import('./pdf.js')
+    await closeBrowser()
+    console.log('✅ Browser closed, cleanup complete')
+    process.exit(0)
+  })
 })
 
-process.on('SIGINT', () => {
-  console.log('SIGINT received, shutting down gracefully...')
-  process.exit(0)
+process.on('SIGINT', async () => {
+  console.log('\n⚠️  SIGINT signal received: closing HTTP server')
+  server.close(async () => {
+    console.log('🛑 HTTP server closed')
+    const { closeBrowser } = await import('./pdf.js')
+    await closeBrowser()
+    console.log('✅ Browser closed, cleanup complete')
+    process.exit(0)
+  })
 })

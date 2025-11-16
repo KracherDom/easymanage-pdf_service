@@ -1,6 +1,10 @@
 FROM node:18-slim
 
-# Install Playwright dependencies
+# Set memory limits for Node.js
+ENV NODE_OPTIONS="--max-old-space-size=512 --expose-gc"
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+
+# Install Playwright dependencies (Railway.com optimized)
 RUN apt-get update && apt-get install -y \
     libnss3 \
     libnspr4 \
@@ -21,6 +25,7 @@ RUN apt-get update && apt-get install -y \
     libasound2 \
     libxshmfence1 \
     fonts-liberation \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -31,18 +36,18 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci --only=production
 
-# Install Playwright Chromium
-RUN npx playwright install chromium
+# Install Playwright Chromium with all dependencies
+RUN npx playwright install --with-deps chromium
 
 # Copy source code
 COPY src ./src
 
-# Expose port
+# Railway automatically handles PORT env variable
 EXPOSE 3001
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3001/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); })"
+# Health check (optimized interval to reduce CPU usage)
+HEALTHCHECK --interval=60s --timeout=5s --start-period=15s --retries=2 \
+  CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || 3001) + '/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); })"
 
 # Start the service
 CMD ["npm", "start"]
