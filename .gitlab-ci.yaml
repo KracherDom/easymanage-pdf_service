@@ -1,0 +1,25 @@
+# .gitlab-ci.yml
+stages:
+  - push
+
+variables:
+  IMAGE_NAME: "$CI_REGISTRY_IMAGE"
+  IMAGE_TAG: "$CI_COMMIT_SHORT_SHA"
+
+# Auth für private GitLab Registry (wird von GitLab bereitgestellt)
+before_script:
+  - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+
+build-and-push:
+  image:
+    name: gcr.io/kaniko-project/executor:latest
+    entrypoint: [""]
+  stage: push
+  script:
+    - /kaniko/executor
+      --dockerfile=Dockerfile
+      --context=.
+      --destination=$IMAGE_NAME:$IMAGE_TAG
+      --destination=$IMAGE_NAME:latest
+  only:
+    - main
