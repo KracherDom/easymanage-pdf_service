@@ -58,7 +58,7 @@ railway init
 # Variables setzen
 railway variables set NODE_ENV=production
 railway variables set API_KEY=$(openssl rand -hex 32)
-railway variables set ALLOWED_ORIGINS=https://your-app.vercel.app
+railway variables set ALLOWED_ORIGINS=https://app-easymanage-at.netlify.app/  
 
 # Deployen
 railway up
