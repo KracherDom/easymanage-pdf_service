@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import { config } from 'dotenv'
+import { createClient } from '@supabase/supabase-js'
 import { generatePdf, validateHtml } from './pdf.js'
 
 // Load environment variables
@@ -9,7 +10,17 @@ config()
 
 const app = express()
 const PORT = process.env.PORT || 3001
-const API_KEY = process.env.API_KEY || 'development-key-change-in-production'
+const SUPABASE_URL = process.env.SUPABASE_URL
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY
+
+// Initialize Supabase client for JWT verification
+let supabase = null
+if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+  supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  console.log('✅ Supabase client initialized for JWT verification')
+} else {
+  console.warn('⚠️  SUPABASE_URL or SUPABASE_ANON_KEY not set - JWT auth disabled')
+}
 
 // Security middleware
 app.use(helmet({
@@ -20,7 +31,7 @@ app.use(helmet({
 const corsOptions = {
   origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : '*',
   methods: ['POST', 'GET'],
-  allowedHeaders: ['Content-Type', 'x-api-key']
+  allowedHeaders: ['Content-Type', 'Authorization']
 }
 app.use(cors(corsOptions))
 
@@ -28,25 +39,59 @@ app.use(cors(corsOptions))
 app.use(express.json({ limit: '5mb' }))
 app.use(express.urlencoded({ extended: true, limit: '5mb' }))
 
-// API Key middleware
-function verifyApiKey(req, res, next) {
-  const apiKey = req.headers['x-api-key']
+// JWT Authentication Middleware
+async function verifySupabaseJWT(req, res, next) {
+  // Skip auth if Supabase not configured (local development)
+  if (!supabase) {
+    console.log('👨‍💻 Development mode: Skipping JWT verification')
+    return next()
+  }
   
-  if (!apiKey) {
+  const authHeader = req.headers['authorization']
+  
+  if (!authHeader) {
     return res.status(401).json({
       error: 'Unauthorized',
-      message: 'API key is required. Send it via x-api-key header.'
+      message: 'Authorization header is required'
     })
   }
   
-  if (apiKey !== API_KEY) {
+  // Extract token from "Bearer <token>"
+  const token = authHeader.startsWith('Bearer ') 
+    ? authHeader.substring(7) 
+    : authHeader
+  
+  if (!token) {
     return res.status(401).json({
       error: 'Unauthorized',
-      message: 'Invalid API key'
+      message: 'Bearer token is required'
     })
   }
   
-  next()
+  try {
+    // Verify JWT token with Supabase
+    const { data: { user }, error } = await supabase.auth.getUser(token)
+    
+    if (error || !user) {
+      console.error('❌ JWT verification failed:', error?.message || 'Invalid token')
+      return res.status(401).json({
+        error: 'Unauthorized',
+        message: 'Invalid or expired token'
+      })
+    }
+    
+    // Attach user to request for potential use in handlers
+    req.user = user
+    console.log(`✅ Authenticated user: ${user.email} (${user.id})`)
+    
+    next()
+  } catch (error) {
+    console.error('❌ JWT verification error:', error)
+    return res.status(401).json({
+      error: 'Unauthorized',
+      message: 'Token verification failed'
+    })
+  }
 }
 
 // Request logging middleware
@@ -81,12 +126,12 @@ app.get('/health', (req, res) => {
  * }
  * 
  * Headers:
- * - x-api-key: Your API key
+ * - Authorization: Bearer <supabase-jwt-token>
  * - Content-Type: application/json
  * 
  * Returns: PDF file (application/pdf)
  */
-app.post('/generate', verifyApiKey, async (req, res) => {
+app.post('/generate', verifySupabaseJWT, async (req, res) => {
   try {
     const { html, filename, pdfFooterDisplay } = req.body
 
@@ -204,13 +249,13 @@ const server = app.listen(PORT, '0.0.0.0', () => {
 ║   Status: Running (Memory-optimized mode)                ║
 ║   Port: ${PORT}                                           ║
 ║   Environment: ${process.env.NODE_ENV || 'development'}  ║
-║   API Key: ${API_KEY === 'development-key-change-in-production' ? '⚠️  Using development key' : '✅ Configured'}
+║   Auth: ${supabase ? '✅ Supabase JWT enabled' : '⚠️  JWT disabled (dev mode)'}
 ║   Max Memory: 512MB (Node.js heap limit)                 ║
 ║   GC: Exposed (automatic cleanup enabled)                ║
 ║                                                           ║
 ║   Endpoints:                                              ║
 ║   - GET  /health   (Health check)                        ║
-║   - POST /generate (PDF generation - requires API key)   ║
+║   - POST /generate (PDF generation - requires JWT)       ║
 ║                                                           ║
 ║   Resource Optimizations:                                ║
 ║   ✅ Browser instance pooling (5min idle timeout)        ║

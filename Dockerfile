@@ -1,6 +1,7 @@
 FROM node:18-slim
 
-# Set Playwright browser path
+# Set memory limits for Node.js
+ENV NODE_OPTIONS="--max-old-space-size=512 --expose-gc"
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
 # Install Playwright dependencies (Railway.com optimized)
