@@ -5,8 +5,8 @@
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
-    "start": "node --max-old-space-size=512 --expose-gc src/server.js",
-    "dev": "NODE_ENV=development node --max-old-space-size=512 --expose-gc src/server.js",
+    "start": "node --max-old-space-size=512 src/server.js",
+    "dev": "NODE_ENV=development node --max-old-space-size=512 src/server.js",
     "test": "node test-service.js"
   },
   "keywords": [
