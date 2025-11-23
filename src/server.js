@@ -28,12 +28,15 @@ app.use(helmet({
 }))
 
 // CORS configuration
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['*']
 const corsOptions = {
-  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : '*',
+  origin: allowedOrigins,
   methods: ['POST', 'GET'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }
 app.use(cors(corsOptions))
+
+console.log(`🌐 CORS Origins: ${allowedOrigins.join(', ')}`)
 
 // Body parser - reduced limit for memory efficiency
 app.use(express.json({ limit: '5mb' }))
@@ -241,15 +244,20 @@ app.use((err, req, res, next) => {
 
 // Start server
 const server = app.listen(PORT, '0.0.0.0', () => {
+  const corsDisplay = allowedOrigins.length === 1 && allowedOrigins[0] === '*' 
+    ? '⚠️  All origins (*) - Dev mode' 
+    : '✅ ' + allowedOrigins.join(', ')
+  
   console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
 ║   📄 PDF Generation Microservice                         ║
 ║                                                           ║
 ║   Status: Running (Memory-optimized mode)                ║
-║   Port: ${PORT}                                           ║
-║   Environment: ${process.env.NODE_ENV || 'development'}  ║
-║   Auth: ${supabase ? '✅ Supabase JWT enabled' : '⚠️  JWT disabled (dev mode)'}
+║   Port: ${PORT.toString().padEnd(50)}║
+║   Environment: ${(process.env.NODE_ENV || 'development').padEnd(43)}║
+║   Auth: ${(supabase ? '✅ Supabase JWT enabled' : '⚠️  JWT disabled (dev mode)').padEnd(47)}║
+║   CORS: ${corsDisplay.padEnd(47)}║
 ║   Max Memory: 512MB (Node.js heap limit)                 ║
 ║   GC: Exposed (automatic cleanup enabled)                ║
 ║                                                           ║
