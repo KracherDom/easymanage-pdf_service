@@ -46,7 +46,7 @@ app.use(express.urlencoded({ extended: true, limit: '5mb' }))
 async function verifySupabaseJWT(req, res, next) {
   // Skip auth if Supabase not configured (local development)
   if (!supabase) {
-    console.log('👨‍💻 Development mode: Skipping JWT verification')
+    console.log('👨‍💻 Development mode: Skipping JWT verification (SUPABASE not configured)')
     return next()
   }
   

@@ -54,14 +54,25 @@ async function testSimplePdf() {
       <head>
         <meta charset="UTF-8">
         <style>
-          body { font-family: Arial; padding: 40px; }
-          h1 { color: #10B981; }
+          @page { size: A4; margin: 20mm; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: Arial, sans-serif; 
+          }
+          .content { padding: 0; }
+          h1 { color: #10B981; margin-bottom: 20px; }
+          p { margin-bottom: 10px; }
         </style>
       </head>
       <body>
-        <h1>Test PDF</h1>
-        <p>Generated at: ${new Date().toISOString()}</p>
-        <p>This is a simple test PDF from the PDF microservice.</p>
+        <div class="content">
+          <h1>Test PDF</h1>
+          <p>Generated at: ${new Date().toISOString()}</p>
+          <p>This is a simple test PDF from the PDF microservice.</p>
+          <p><strong>Note:</strong> Symmetric margins are now enforced via @page CSS rule.</p>
+        </div>
       </body>
     </html>
   `
@@ -111,7 +122,15 @@ async function testPdfWithFooter() {
         <meta charset="UTF-8">
         <style>
           @page { size: A4; margin: 20mm; }
-          body { font-family: Arial; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: Arial, sans-serif; 
+          }
+          h1 { margin-bottom: 20px; }
+          h2 { margin-bottom: 15px; margin-top: 20px; }
+          p { margin-bottom: 10px; }
           .footer {
             position: fixed;
             bottom: 0;
@@ -127,10 +146,10 @@ async function testPdfWithFooter() {
       </head>
       <body>
         <h1>Multi-Page PDF Test</h1>
-        <p>Page 1 content</p>
+        <p>Page 1 content - Testing symmetric margins</p>
         <div style="page-break-after: always;"></div>
         <h2>Page 2</h2>
-        <p>Page 2 content</p>
+        <p>Page 2 content - Margins should be identical on both pages</p>
         <div class="footer">Footer on all pages</div>
       </body>
     </html>
@@ -181,7 +200,15 @@ async function testPdfFooterFirstPage() {
         <meta charset="UTF-8">
         <style>
           @page { size: A4; margin: 20mm; }
-          body { font-family: Arial; }
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: Arial, sans-serif; 
+          }
+          h1 { margin-bottom: 20px; }
+          h2 { margin-bottom: 15px; margin-top: 20px; }
+          p { margin-bottom: 10px; }
           .footer {
             position: fixed;
             bottom: 0;
@@ -198,13 +225,13 @@ async function testPdfFooterFirstPage() {
       </head>
       <body>
         <h1>First Page Only Footer Test</h1>
-        <p>Page 1 - Footer should appear here</p>
+        <p>Page 1 - Footer should appear here with symmetric margins</p>
         <div style="page-break-after: always;"></div>
         <h2>Page 2</h2>
-        <p>Page 2 - Footer should be covered by white rectangle</p>
+        <p>Page 2 - Footer should be covered by white rectangle, margins stay symmetric</p>
         <div style="page-break-after: always;"></div>
         <h2>Page 3</h2>
-        <p>Page 3 - Footer should also be covered</p>
+        <p>Page 3 - Footer should also be covered, all pages have identical margins</p>
         <div class="footer">This footer should only appear on page 1</div>
       </body>
     </html>

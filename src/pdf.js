@@ -133,7 +133,9 @@ export async function generatePdf(options) {
 
     console.log(`📄 [PDF-Service] Generating PDF (footer mode: ${pdfFooterDisplay})`)
 
-    // Generate PDF with A4 settings (optimized for less memory)
+    // Generate PDF with A4 settings
+    // IMPORTANT: preferCSSPageSize: true allows HTML to control margins via @page CSS
+    // This ensures symmetric left/right margins as defined in the HTML template
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
@@ -143,9 +145,9 @@ export async function generatePdf(options) {
         bottom: '0mm',
         left: '0mm'
       },
-      preferCSSPageSize: false, // Saves memory
+      preferCSSPageSize: true, // Respect CSS @page rules for symmetric margins
       displayHeaderFooter: false,
-      scale: 0.95, // Slightly reduced for less memory
+      scale: 1.0, // Keep at 1.0 to prevent asymmetric rendering
     })
 
     // DON'T close browser - reuse it for next request
