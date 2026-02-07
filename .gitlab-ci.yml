@@ -203,8 +203,7 @@ rollback:production:
     - echo "⏮️ Rolling back to previous deployment..."
     - railway login --browserless
     - railway link ${RAILWAY_PROJECT_ID}
-    
-    # Railway doesn't have native rollback, but you can redeploy a previous commit
+    - echo "ℹ️ Railway doesn't have native rollback, but you can redeploy a previous commit"
     - echo "ℹ️ To rollback: Manually trigger pipeline from previous commit"
     - railway status
   
