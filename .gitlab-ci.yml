@@ -194,24 +194,19 @@ verify:production:
 rollback:production:
   stage: deploy
   image: alpine:latest
-  
   before_script:
     - apk add --no-cache bash curl nodejs npm
     - npm install -g @railway/cli@${RAILWAY_CLI_VERSION}
-  
   script:
-    - echo "⏮️ Rolling back to previous deployment..."
+    - echo "⏮️ Rollback Information"
+    - echo "Railway doesn't support native rollback via CLI"
+    - echo "To rollback, manually trigger this pipeline from a previous commit"
     - railway login --browserless
     - railway link ${RAILWAY_PROJECT_ID}
-    - echo "ℹ️ Railway doesn't have native rollback, but you can redeploy a previous commit"
-    - echo "ℹ️ To rollback: Manually trigger pipeline from previous commit"
     - railway status
-  
   environment:
     name: production
     action: prepare
-  
   only:
     - main
-  
   when: manual
